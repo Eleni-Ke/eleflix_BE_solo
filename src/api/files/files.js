@@ -2,12 +2,12 @@ import Express from "express";
 import createHttpError from "http-errors";
 import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import { extname } from "path";
 import { getMedias, writeMedias } from "../../lib/fs-tools.js";
 import { v2 as cloudinary } from "cloudinary";
-import { write } from "fs";
+import { getPDFReadableStream } from "../../lib/pdf-tools.js";
+import { pipeline } from "stream";
 
-const posterRouter = Express.Router();
+const filesRouter = Express.Router();
 const cloudinaryUploader = multer({
   storage: new CloudinaryStorage({
     cloudinary,
@@ -15,7 +15,7 @@ const cloudinaryUploader = multer({
   }),
 }).single("poster");
 
-posterRouter.post(
+filesRouter.post(
   "/:mediasId/poster",
   cloudinaryUploader,
   async (req, res, next) => {
@@ -43,4 +43,27 @@ posterRouter.post(
   }
 );
 
-export default posterRouter;
+filesRouter.get("/:mediasId/pdf", async (req, res, next) => {
+  try {
+    const mediaId = req.params.mediasId;
+    const allMedias = await getMedias();
+    const matchedMedia = allMedias.find((e) => e.id === mediaId);
+    if (matchedMedia) {
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; fineName=${matchedMedia.title}.pdf`
+      );
+      const source = await getPDFReadableStream(matchedMedia);
+      const destination = res;
+      pipeline(source, destination, (err) => {
+        if (err) console.log(err);
+      });
+    } else {
+      next(createHttpError(404, `Media with the id ${mediaId} not found.`));
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+export default filesRouter;

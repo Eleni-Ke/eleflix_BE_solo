@@ -12,11 +12,11 @@ export const getPDFReadableStream = async (post) => {
   };
   const printer = new PdfPrinter(fonts);
 
-  //const encodedImage = await imageToBase64(post.poster);
+  const encodedImage = await imageToBase64(post.poster);
 
   const docDefinition = {
     content: [
-      //{ image: `data:image/jpeg;base64, ${encodedImage}`, width: 150 },
+      { image: `data:image/jpeg;base64, ${encodedImage}`, width: 150 },
       post.title,
       post.content,
     ],

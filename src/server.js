@@ -8,7 +8,7 @@ import {
   notFoundHandler,
 } from "./errorsHandler.js";
 import listEndpoints from "express-list-endpoints";
-import posterRouter from "./api/files/poster.js";
+import filesRouter from "./api/files/files.js";
 
 const server = Express();
 const port = process.env.PORT;
@@ -33,7 +33,7 @@ server.use(Express.json());
 
 // ******************* ENDPOINTS *******************
 server.use("/medias", mediasRouter);
-server.use("/medias", posterRouter);
+server.use("/medias", filesRouter);
 
 // ******************* ERROR HANDLERS *******************
 server.use(badReqHandler);

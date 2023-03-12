@@ -12,11 +12,12 @@ import filesRouter from "./api/files/files.js";
 
 const server = Express();
 const port = process.env.PORT;
-const whitelist = [process.env.FE_DEV_URL, process.env.FE_PROP_URL];
+const whitelist = [process.env.FE_DEV_URL, process.env.FE_PROD_URL];
 
 const corsOpts = {
   origin: (origin, corsNext) => {
     console.log("CURRENT ORIGIN: ", origin);
+    console.log(whitelist);
     if (!origin || whitelist.indexOf(origin) !== -1) {
       corsNext(null, true);
     } else {

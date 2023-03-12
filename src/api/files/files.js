@@ -51,8 +51,9 @@ filesRouter.get("/:mediasId/pdf", async (req, res, next) => {
     if (matchedMedia) {
       res.setHeader(
         "Content-Disposition",
-        `attachment; fineName=${matchedMedia.title}.pdf`
+        `attachment; filename=${matchedMedia.title}.pdf`
       );
+      console.log(matchedMedia);
       const source = await getPDFReadableStream(matchedMedia);
       const destination = res;
       pipeline(source, destination, (err) => {
